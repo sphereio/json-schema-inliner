@@ -1,9 +1,7 @@
-name := "json-schema-inliner-plugin"
+name := "json-schema-inliner"
 organization := "io.sphere"
 
 sbtPlugin := true
-
-version := "1.0"
 
 scalaVersion := "2.10.5"
 
@@ -14,3 +12,8 @@ libraryDependencies ++=
 libraryDependencies ++=
   "org.scalatest" % "scalatest_2.11" % "2.2.4" ::
   Nil map (_ % Test)
+
+licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+
+releaseSettings
+bintraySettings
