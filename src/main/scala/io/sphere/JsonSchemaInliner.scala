@@ -55,13 +55,13 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
   }
 
   private def references(json: JValue): Set[String] =
-    json filterField {
+    (json filterField {
       case JField("$ref", _) => true
       case _ => false
     } flatMap {
       case JField(_, JString(s: String)) => if (!s.startsWith("#")) List(s) else List()
       case _ => List()
-    } toSet
+    }).toSet
 
   private def removeSchema(p: JValue): JValue =
     p.removeField {
