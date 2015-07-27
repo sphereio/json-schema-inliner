@@ -19,10 +19,13 @@ object JsonSchemaInlinerPlugin extends AutoPlugin {
   override def requires: Plugins = JvmPlugin
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
+    includeFilter := GlobFilter("*.schema.json"),
     inlineDestination in Compile <<= (resourceManaged in Compile) map (f => new File(f, "inline")),
 
     jsonInliner in Compile := {
-      val sources = (unmanagedResources in Compile).value.filter (f => f.isFile)
+      val sources = (unmanagedResourceDirectories in Compile).value flatMap { s ⇒
+        s.descendantsExcept(includeFilter.value, excludeFilter.value).get.map(f ⇒ (s, f))
+      }
       JsonSchemaInliner.inline(sources, (inlineDestination in Compile).value, streams.value)
     },
 

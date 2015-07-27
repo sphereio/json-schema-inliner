@@ -13,8 +13,7 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
 
   private val baseDir = source.getParentFile
 
-  def inline(destination: File): Option[File] = {
-    val target = new File(destination, source.getName)
+  def inline(target: File): Option[File] = {
     val schemas = toInline
     val moreRecent = schemas.values.map(_._1.lastModified()).max
     if (target.exists() && target.lastModified() == moreRecent) {
@@ -71,9 +70,11 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
 }
 
 object JsonSchemaInliner {
-  def inline(sources: Seq[File], destination: File, streams: TaskStreams): Seq[File] =
-    sources flatMap { src =>
+  def inline(sources: Seq[(File, File)], destination: File, streams: TaskStreams): Seq[File] =
+    sources flatMap { case (base, src) =>
       val inliner = new JsonSchemaInliner(src, streams)
-      inliner.inline(destination)
+      val relative = IO.relativize(base, src).getOrElse(src.getName)
+      val target = new File(destination, relative)
+      inliner.inline(target)
     }
 }
