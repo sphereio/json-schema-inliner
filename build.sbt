@@ -15,4 +15,4 @@ javacOptions ++= Seq("-deprecation", "-Xlint:unchecked", "-source", "1.7", "-tar
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 releaseSettings
-bintraySettings
+
