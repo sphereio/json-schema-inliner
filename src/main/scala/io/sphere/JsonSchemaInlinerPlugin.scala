@@ -23,7 +23,6 @@ object JsonSchemaInlinerPlugin extends AutoPlugin {
 
     inlineDestinationF in Compile := {
       val newBase = (resourceManaged in Compile).value
-      println(newBase)
       (f: File) ⇒ new File(newBase, new File(f.getParentFile, "inline/" + f.getName).getPath)
     },
 

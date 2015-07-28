@@ -21,7 +21,7 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
       streams.log.debug( s""""$target" already up to dated""")
       None
     } else {
-      streams.log.info( s"""inline "$source" to "$target"""")
+      streams.log.debug( s"""inline "$source" to "$target"""")
       val json = parseJson(FileInput(source))
       val newContent = inlineSchema(json, schemas.mapValues(_._2))
       IO.write(target, prettyJson(newContent).getBytes(Charset.forName("UTF-8")))
@@ -75,7 +75,7 @@ object JsonSchemaInliner {
       val inliner = new JsonSchemaInliner(src, streams)
       val relative = IO.relativizeFile(base, src).getOrElse(src)
       val target = destinationF(relative)
-      streams.log.info(
+      streams.log.debug(
         s"""base: $base
            |src: $src
            |relative: $relative
