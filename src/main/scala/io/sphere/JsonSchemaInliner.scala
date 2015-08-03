@@ -44,9 +44,9 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
 
   private def inlineSchema(json: JValue, raj: Map[String, JValue]): JValue = {
     json.transform {
-      case JObject(JField("$ref", JString(s: String)) :: List()) => raj.getOrElse(s, JObject(List(JField("$ref", JString(s)))))
+      case JObject(JField("$ref", JString(s: String)) :: List()) => raj.get(s).map(inlineSchema(_, raj)).getOrElse(JObject(List(JField("$ref", JString(s)))))
       case JObject(JField("$ref", JString(s: String)) :: otherFields) =>
-        raj.get(s).map {
+        raj.get(s).map(inlineSchema(_, raj)).map {
           case JObject(fields) => JObject(fields ::: otherFields)
           case o => o
         }.getOrElse(JObject(List(JField("$ref", JString(s)))))
