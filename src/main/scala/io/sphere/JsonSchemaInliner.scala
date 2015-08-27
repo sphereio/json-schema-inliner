@@ -42,14 +42,15 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
     step(source.getName, Map.empty)
   }
 
-  private def inlineSchema(json: JValue, raj: Map[String, JValue]): JValue = {
+  private def inlineSchema(json: JValue, raj: Map[String, JValue], inlinedFiles: Vector[String] = Vector.empty): JValue = {
     json.transform {
-      case JObject(JField("$ref", JString(s: String)) :: List()) => raj.get(s).map(inlineSchema(_, raj)).getOrElse(JObject(List(JField("$ref", JString(s)))))
-      case JObject(JField("$ref", JString(s: String)) :: otherFields) =>
-        raj.get(s).map(inlineSchema(_, raj)).map {
+      case JObject(JField("$ref", JString(file: String)) :: List()) if !inlinedFiles.contains(file) =>
+        raj.get(file).map(inlineSchema(_, raj, inlinedFiles :+ file)).getOrElse(JObject(List(JField("$ref", JString(file)))))
+      case JObject(JField("$ref", JString(file: String)) :: otherFields) if !inlinedFiles.contains(file) =>
+        raj.get(file).map(inlineSchema(_, raj, inlinedFiles :+ file)).map {
           case JObject(fields) => JObject(fields ::: otherFields)
           case o => o
-        }.getOrElse(JObject(List(JField("$ref", JString(s)))))
+        }.getOrElse(JObject(List(JField("$ref", JString(file)))))
     }
   }
 
