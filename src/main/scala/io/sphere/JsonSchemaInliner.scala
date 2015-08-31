@@ -46,11 +46,6 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
     json.transform {
       case JObject(JField("$ref", JString(file: String)) :: List()) if !inlinedFiles.contains(file) =>
         raj.get(file).map(inlineSchema(_, raj, inlinedFiles :+ file)).getOrElse(JObject(List(JField("$ref", JString(file)))))
-      case JObject(JField("$ref", JString(file: String)) :: otherFields) if !inlinedFiles.contains(file) =>
-        raj.get(file).map(inlineSchema(_, raj, inlinedFiles :+ file)).map {
-          case JObject(fields) => JObject(fields ::: otherFields)
-          case o => o
-        }.getOrElse(JObject(List(JField("$ref", JString(file)))))
     }
   }
 
