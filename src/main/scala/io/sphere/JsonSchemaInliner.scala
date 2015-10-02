@@ -67,7 +67,7 @@ class JsonSchemaInliner(source: File, streams: TaskStreams) {
 
 object JsonSchemaInliner {
   def inline(sources: Seq[(File, File)], destinationF: File ⇒ File, streams: TaskStreams): Seq[File] = {
-    sources flatMap { case (base, src) =>
+    sources map { case (base, src) =>
       val inliner = new JsonSchemaInliner(src, streams)
       val relative = IO.relativizeFile(base, src).getOrElse(src)
       val target = destinationF(relative)
@@ -77,7 +77,7 @@ object JsonSchemaInliner {
            |relative: $relative
            |target: $target
          """.stripMargin)
-      inliner.inline(target)
+      inliner.inline(target).getOrElse(target)
     }
   }
 }
