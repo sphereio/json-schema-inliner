@@ -3,10 +3,10 @@ organization := "io.sphere"
 
 sbtPlugin := true
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10.6"
 
 libraryDependencies ++=
-  "org.json4s" %% "json4s-jackson" % "3.2.11" ::
+  "org.json4s" %% "json4s-jackson" % "3.3.0" ::
   Nil
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
